@@ -11,11 +11,10 @@ module.exports = (req, res, next) => {
                .status(401)
                .send({ error: true, msg: "Unauthorized user" });
          }
-         console.log(decoded);
          req.decoded = decoded;
          next();
       });
    } else {
-      res.status(403).send({ error: true, msg: "Token not provided" });
+      res.status(401).send({ error: true, msg: "Token not provided" });
    }
 };

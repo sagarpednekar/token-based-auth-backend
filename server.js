@@ -1,6 +1,7 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 const app = express();
 const authorize = require("./authenticate");
 const tokenList = {};
@@ -11,6 +12,8 @@ const PORT = process.env.PORT || 4000;
 // add middleware
 
 app.use(bodyParser.json());
+
+app.use(cors());
 
 // root path
 
@@ -39,10 +42,10 @@ app.post("/login", (req, res) => {
     */
 
    const token = jwt.sign(user, process.env.tokenSecret, {
-      expiresIn: "10m"
+      expiresIn: "10s"
    });
    const refreshToken = jwt.sign(user, process.env.refreshTokenSecret, {
-      expiresIn: process.env.refreshTokenLife
+      expiresIn: "20s"
    });
 
    tokenList[refreshToken] = { token, refreshToken };
@@ -62,13 +65,11 @@ app.post("/token", (req, res) => {
       };
 
       const token = jwt.sign(user, process.env.tokenSecret, {
-         expiresIn: "10m"
+         expiresIn: "10s"
       });
 
-      console.log(tokenList);
       // update the token in list
       tokenList[reqBody.refreshToken].token = token;
-      console.log(tokenList);
       res.status(200).send({
          token
       });
